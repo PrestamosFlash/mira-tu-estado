@@ -1,0 +1,102 @@
+[
+  {
+    "dni": "26380008",
+    "codigo": "5664",
+    "nombre": "esteban miranda",
+    "total": 300000,
+    "pagado": 0,
+    "pendiente": 300000,
+    "vencimiento": "28/3/2026",
+    "estado": "verde",
+    "cuotaLabel": "💸 Cuota semanal",
+    "cuotaMonto": 25000,
+    "mora": 0,
+    "periodLabel": "12 semanas",
+    "installments": [
+      {
+        "number": 1,
+        "dueDate": "2026-03-28",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 2,
+        "dueDate": "2026-04-04",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 3,
+        "dueDate": "2026-04-11",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 4,
+        "dueDate": "2026-04-18",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 5,
+        "dueDate": "2026-04-25",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 6,
+        "dueDate": "2026-05-02",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 7,
+        "dueDate": "2026-05-09",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 8,
+        "dueDate": "2026-05-16",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 9,
+        "dueDate": "2026-05-23",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 10,
+        "dueDate": "2026-05-30",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 11,
+        "dueDate": "2026-06-06",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      },
+      {
+        "number": 12,
+        "dueDate": "2026-06-13",
+        "amount": 25000,
+        "paidAmount": 0,
+        "status": "pendiente"
+      }
+    ]
+  }
+]
