@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Préstamos Flash - Estado</title>
+<meta name="theme-color" content="#7c3aed">
+<meta name="description" content="Consulta rápida y segura del estado de tu préstamo">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<style>
+*{box-sizing:border-box}
+:root{--bg1:#120814;--bg2:#231028}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:#fff;min-height:100vh;padding:20px;background:
+radial-gradient(circle at 10% 10%, rgba(255,0,120,.16), transparent 22%),
+radial-gradient(circle at 90% 20%, rgba(255,180,0,.10), transparent 20%),
+linear-gradient(135deg,var(--bg1),var(--bg2),#321332)}
+.wrap{max-width:930px;margin:auto}
+.brand{text-align:center;margin-bottom:22px;opacity:0;transform:translateY(20px);transition:.55s ease}
+.brand.visible{opacity:1;transform:none}
+.brand img{width:84px;height:84px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.35))}
+.brand h1{margin:0;font-size:40px;font-weight:900;text-shadow:0 4px 20px rgba(255,60,160,.25)}
+.brand p{margin:8px 0 0;color:rgba(255,255,255,.88)}
+.login-box,.panel{border-radius:30px;overflow:hidden;border:1px solid rgba(255,255,255,.10);box-shadow:0 28px 80px rgba(0,0,0,.55)}
+.login-box{background:rgba(255,255,255,.08);padding:28px;backdrop-filter:blur(12px);opacity:0;transform:translateY(20px);transition:.55s ease}
+.login-box.visible{opacity:1;transform:none}
+.login-title{font-size:30px;font-weight:900;text-align:center;margin-bottom:18px}
+.login-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+input{width:100%;padding:16px 18px;border:none;outline:none;border-radius:18px;font-size:18px;background:rgba(255,255,255,.97);color:#22151f;transition:.18s ease}
+input:focus{box-shadow:0 0 0 4px rgba(168,85,247,.22)}
+.btn{margin-top:14px;width:100%;padding:16px 18px;border:none;border-radius:18px;font-size:18px;font-weight:900;color:#fff;cursor:pointer;background:linear-gradient(135deg,#ff2b7a,#ff7a45 55%,#ffb347);box-shadow:0 16px 34px rgba(255,61,124,.36);position:relative;overflow:hidden;transition:.18s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(255,61,124,.42)}
+.btn:after{content:"";position:absolute;top:0;left:-140%;width:90%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:skewX(-20deg)}
+.btn:hover:after{animation:shine .9s ease}
+@keyframes shine{to{left:160%}}
+.error{margin-top:12px;text-align:center;color:#ffd8dd;min-height:20px;font-weight:700}
+.panel{display:none;opacity:0;transform:translateY(20px);transition:.5s ease}
+.panel.visible{opacity:1;transform:none}
+.verde{background:linear-gradient(135deg,#0b6a39 0%,#0da854 54%,#00c160 100%);box-shadow:0 28px 80px rgba(0,0,0,.55),0 0 44px rgba(0,255,140,.12)}
+.amarillo{background:linear-gradient(135deg,#cb8d00 0%,#f4b000 56%,#ff8d1c 100%);color:#2f1c00}
+.rojo{background:linear-gradient(135deg,#a70e14 0%,#db3434 55%,#ff6666 100%)}
+.estado-head{padding:24px 26px 18px}
+.estado-head:after{content:"";display:block;height:1px;margin-top:16px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent)}
+.topline{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.status-pill{display:inline-flex;align-items:center;gap:12px;padding:10px 16px;border-radius:999px;background:rgba(0,0,0,.20);border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 16px rgba(0,0,0,.24)}
+.semaforo{width:18px;height:18px;border-radius:50%}
+.verde .semaforo{background:radial-gradient(circle at 35% 35%,#edfff5,#8fffc7 60%,#3bdd80 100%);box-shadow:0 0 0 4px rgba(255,255,255,.14),0 0 18px rgba(120,255,190,.55)}
+.amarillo .semaforo{background:radial-gradient(circle at 35% 35%,#fffdea,#ffe57c 60%,#f1b800 100%);box-shadow:0 0 0 4px rgba(255,255,255,.14),0 0 18px rgba(255,225,120,.45)}
+.rojo .semaforo{background:radial-gradient(circle at 35% 35%,#fff0f0,#ff9c9c 60%,#ff4747 100%);box-shadow:0 0 0 4px rgba(255,255,255,.14),0 0 18px rgba(255,120,120,.45)}
+.estado-texto{font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;text-shadow:0 1px 6px rgba(0,0,0,.22)}
+.cliente-nombre{font-size:38px;font-weight:900;margin-top:14px;text-transform:lowercase;text-shadow:0 3px 16px rgba(0,0,0,.18)}
+.badge{padding:10px 16px;border-radius:999px;font-size:14px;font-weight:900;white-space:nowrap;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 18px rgba(0,0,0,.18)}
+.panel-body{padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)),rgba(10,10,15,.18)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.card{position:relative;border-radius:24px;padding:20px;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease}
+.card:hover{transform:translateY(-2px)}
+.verde .card{background:linear-gradient(180deg,rgba(7,58,28,.78),rgba(10,82,39,.54));border:1px solid rgba(0,0,0,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -1px 0 rgba(0,0,0,.14),0 14px 30px rgba(0,0,0,.28)}
+.amarillo .card{background:linear-gradient(180deg,rgba(120,77,0,.28),rgba(255,255,255,.16));border:1px solid rgba(120,77,0,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 12px 28px rgba(0,0,0,.22)}
+.rojo .card{background:linear-gradient(180deg,rgba(88,10,10,.42),rgba(140,20,20,.26));border:1px solid rgba(0,0,0,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 28px rgba(0,0,0,.24)}
+.card:before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.20),transparent)}
+.metric{min-height:132px;display:flex;flex-direction:column;justify-content:center}
+.label{font-size:13px;color:rgba(255,255,255,.96);margin-bottom:8px;font-weight:900;text-transform:uppercase;letter-spacing:.55px;text-shadow:0 1px 6px rgba(0,0,0,.20)}
+.amarillo .label{color:#3b2300}
+.value-lg{font-size:34px;font-weight:900;line-height:1.05;text-shadow:0 2px 12px rgba(0,0,0,.18)}
+.value-md{font-size:26px;font-weight:900;text-shadow:0 2px 12px rgba(0,0,0,.18)}
+.summary h3,.cuotas h3{margin:0 0 16px;font-size:22px;font-weight:900;text-shadow:0 1px 6px rgba(0,0,0,.20)}
+.fila{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.16);font-size:16px}
+.fila:last-child{border-bottom:none}
+.fila strong{font-size:17px;text-shadow:0 1px 5px rgba(0,0,0,.16)}
+.barra-box{margin-top:18px}
+.barra-top{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;font-size:14px;font-weight:900}
+.barra{width:100%;height:14px;background:rgba(0,0,0,.30);border-radius:999px;overflow:hidden;box-shadow:inset 0 2px 6px rgba(0,0,0,.24),0 1px 0 rgba(255,255,255,.05)}
+.barra-fill{height:100%;width:0%;border-radius:999px;transition:width .4s ease}
+.verde .barra-fill{background:linear-gradient(90deg,#9bffd8,#effff7);box-shadow:0 0 18px rgba(180,255,220,.36)}
+.amarillo .barra-fill{background:linear-gradient(90deg,#fff0ad,#fff8d6);box-shadow:0 0 18px rgba(255,245,180,.30)}
+.rojo .barra-fill{background:linear-gradient(90deg,#ffd1d1,#fff1f1);box-shadow:0 0 18px rgba(255,209,209,.30)}
+.cuota-item{display:flex;justify-content:space-between;gap:10px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.16);font-size:15px}
+.cuota-item:last-child{border-bottom:none}
+.amount{font-weight:900;color:#fff;text-shadow:0 0 10px rgba(255,255,255,.10)}
+.tag{padding:7px 12px;border-radius:999px;font-size:12px;font-weight:900;text-transform:uppercase;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.tag.ok{background:rgba(0,255,140,.20);border:1px solid rgba(0,255,140,.48);color:#d9ffef;box-shadow:0 0 14px rgba(0,255,140,.18)}
+.tag.mid{background:rgba(255,200,0,.20);border:1px solid rgba(255,200,0,.48);color:#fff6cf;box-shadow:0 0 14px rgba(255,200,0,.16)}
+.tag.bad{background:rgba(255,80,80,.20);border:1px solid rgba(255,80,80,.48);color:#ffe1e1;box-shadow:0 0 14px rgba(255,80,80,.16)}
+.tag.pending{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);color:#f3f4f6;box-shadow:0 0 10px rgba(255,255,255,.06)}
+@media (max-width:720px){body{padding:14px}.login-grid,.grid2{grid-template-columns:1fr}.cliente-nombre{font-size:29px}.value-lg,.value-md{font-size:24px}.fila,.cuota-item{flex-direction:column;align-items:flex-start;gap:4px}.estado-head,.panel-body,.login-box{padding:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand" id="brand">
+    <img src="logo.png" alt="Logo Préstamos Flash">
+    <h1>Préstamos Flash</h1>
+    <p>Consulta rápida y segura de tu préstamo</p>
+  </div>
+  <div class="login-box" id="login">
+    <div class="login-title">Consulta tu préstamo</div>
+    <div class="login-grid">
+      <input id="dni" placeholder="Ingresá tu DNI">
+      <input id="cod" placeholder="Código de acceso">
+    </div>
+    <button class="btn" onclick="entrar()">Ingresar</button>
+    <div class="error" id="error"></div>
+  </div>
+  <div class="panel" id="panel"></div>
+</div>
+<script>
+let data=[];
+fetch("portal-clientes.json").then(r=>r.json()).then(d=>data=d).catch(()=>{document.getElementById("error").innerText="No se pudieron cargar los datos.";});
+function f(n){return Number(n||0).toLocaleString("es-AR");}
+function e(t){return String(t??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function clase(c){const s=String(c.estado||"").toLowerCase(); if(s.includes("moro")||s.includes("rojo")) return "rojo"; if(s.includes("atra")||s.includes("amar")||s.includes("venc")) return "amarillo"; return "verde";}
+function txtEstado(k){return k==="rojo"?"Moroso":k==="amarillo"?"Atrasado":"Al día";}
+function venc(c){if(c.vencimiento) return c.vencimiento; if(c.proximoVencimiento) return c.proximoVencimiento; if(Array.isArray(c.installments)){const p=c.installments.find(i=>Number(i.paidAmount||0)<Number(i.amount||0)); if(p&&p.dueDate){const d=String(p.dueDate); if(d.includes("-")){const parts=d.split("-"); return parts[2]+"/"+parts[1]+"/"+parts[0];} return d;}} return "-";}
+function pagado(c){return typeof c.pagado!=="undefined"?Number(c.pagado||0):(Array.isArray(c.installments)?c.installments.reduce((a,i)=>a+Number(i.paidAmount||0),0):0);}
+function pendiente(c,total,p){return typeof c.pendiente!=="undefined"?Number(c.pendiente||0):Math.max(total-p,0);}
+function cuotasInfo(c){if(!Array.isArray(c.installments)) return {total:0,pagadas:0,pendientes:0}; const total=c.installments.length; const pagadas=c.installments.filter(i=>Number(i.paidAmount||0)>=Number(i.amount||0)&&Number(i.amount||0)>0).length; return {total,pagadas,pendientes:total-pagadas};}
+function cuota(c){if(typeof c.cuotaMonto!=="undefined") return {label:c.cuotaLabel||"💸 Cuota",monto:Number(c.cuotaMonto||0)}; if(Array.isArray(c.installments)&&c.installments.length){const pri=c.installments.find(i=>Number(i.amount||0)>0)||c.installments[0]; const p=String(c.periodLabel||"").toLowerCase(); return {label:p.includes("sem")?"💸 Cuota semanal":(p.includes("día")||p.includes("dia"))?"💸 Cuota diaria":"💸 Cuota",monto:Number(pri.amount||0)};} return {label:"💸 Cuota",monto:0};}
+function renderCuotas(c){
+  if(!Array.isArray(c.installments)||!c.installments.length) return "";
+  const items=c.installments.map(i=>{
+    const amount=Number(i.amount||0);
+    const paid=Number(i.paidAmount||0);
+    let estado="⏳ PENDIENTE";
+    let dueDate=i.dueDate||"-";
+    let fechaCuota=null;
+    if(String(dueDate).includes("-")){
+      const parts=String(dueDate).split("-");
+      dueDate=parts[2]+"/"+parts[1]+"/"+parts[0];
+      fechaCuota=new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+    } else if (dueDate && dueDate !== "-") {
+      fechaCuota=new Date(dueDate);
+    }
+    const hoy=new Date();
+    hoy.setHours(0,0,0,0);
+    if(paid>=amount&&amount>0) estado="🟢 PAGADA";
+    else if(paid>0) estado="🟡 PARCIAL";
+    else if(fechaCuota && fechaCuota < hoy) estado="🔴 VENCIDA";
+    const tagClass = estado.includes('PAGADA') ? 'ok' : estado.includes('PARCIAL') ? 'mid' : estado.includes('VENCIDA') ? 'bad' : 'pending';
+    return '<div class="cuota-item"><div><strong>Cuota '+e(i.number)+'</strong><br>Vence: '+e(dueDate)+'</div><div style="text-align:right;"><div class="amount">$'+f(amount)+'</div><div class="tag '+tagClass+'">'+e(estado)+'</div></div></div>';
+  }).join("");
+  return '<div class="card cuotas"><h3>📜 Detalle de cuotas</h3>'+items+'</div>';
+}
+function revealPanel(){
+  document.getElementById("panel").classList.add("visible");
+}
+function entrar(){
+  const dni=document.getElementById("dni").value.trim();
+  const cod=document.getElementById("cod").value.trim();
+  const error=document.getElementById("error");
+  error.innerText="";
+  const c=data.find(x=>String(x.dni)===String(dni) && String(x.codigo)===String(cod));
+  if(!c){error.innerText="DNI o código incorrecto.";return;}
+  const k=clase(c), total=Number(c.total||0), p=pagado(c), pen=pendiente(c,total,p), v=venc(c), m=Number(c.mora||c.moraAcumulada||0), q=cuota(c), qi=cuotasInfo(c), prog=total>0?Math.min((p/total)*100,100):0;
+  document.getElementById("login").style.display="none";
+  const panel=document.getElementById("panel");
+  panel.style.display="block";
+  panel.className="panel "+k;
+  panel.innerHTML=
+    '<div class="estado-head"><div class="topline"><div><div class="status-pill"><div class="semaforo"></div><div class="estado-texto">'+e(txtEstado(k))+'</div></div><div class="cliente-nombre">'+e(c.nombre||c.clientName||"Cliente")+'</div></div><div class="badge">🪪 DNI: '+e(dni)+'</div></div></div>'+
+    '<div class="panel-body">'+
+      '<div class="grid2">'+
+        '<div class="card metric"><div class="label">💰 Total del préstamo</div><div class="value-lg">$'+f(total)+'</div></div>'+
+        '<div class="card metric"><div class="label">📉 Pendiente</div><div class="value-lg">$'+f(pen)+'</div></div>'+
+      '</div>'+
+      '<div class="grid2">'+
+        '<div class="card metric"><div class="label">'+e(q.label)+'</div><div class="value-md">$'+f(q.monto)+'</div></div>'+
+        '<div class="card metric"><div class="label">📅 Próximo vencimiento</div><div class="value-md">'+e(v)+'</div></div>'+
+      '</div>'+
+      '<div class="card summary">'+
+        '<h3>✨ Resumen actual</h3>'+
+        '<div class="fila"><span>💵 Pagado</span><strong>$'+f(p)+'</strong></div>'+
+        '<div class="fila"><span>🚨 Mora acumulada</span><strong>$'+f(m)+'</strong></div>'+
+        '<div class="fila"><span>✅ Cuotas pagadas</span><strong>'+e(qi.pagadas)+' de '+e(qi.total)+'</strong></div>'+
+        '<div class="fila"><span>⏳ Cuotas pendientes</span><strong>'+e(qi.pendientes)+'</strong></div>'+
+        '<div class="barra-box"><div class="barra-top"><span>📊 Progreso del préstamo</span><span>'+prog.toFixed(0)+'%</span></div><div class="barra"><div class="barra-fill" style="width:'+prog+'%"></div></div></div>'+
+      '</div>'+
+      renderCuotas(c)+
+    '</div>';
+  setTimeout(revealPanel, 50);
+}
+const params=new URLSearchParams(window.location.search);
+const dniParam=params.get("dni");
+const codParam=params.get("cod");
+if(dniParam)document.getElementById("dni").value=dniParam;
+if(codParam)document.getElementById("cod").value=codParam;
+window.addEventListener("load",()=>{
+  document.getElementById("brand").classList.add("visible");
+  document.getElementById("login").classList.add("visible");
+});
+if(dniParam&&codParam)setTimeout(()=>entrar(),300);
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
