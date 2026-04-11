@@ -4,9 +4,9 @@
     "codigo": "6550",
     "nombre": "esteban miranda",
     "total": 300000,
-    "pagado": 50000,
-    "pendiente": 250000,
-    "vencimiento": "11/4/2026",
+    "pagado": 75000,
+    "pendiente": 225000,
+    "vencimiento": "18/4/2026",
     "estado": "verde",
     "cuotaLabel": "💸 Cuota semanal",
     "cuotaMonto": 25000,
@@ -31,8 +31,8 @@
         "number": 3,
         "dueDate": "2026-04-11",
         "amount": 25000,
-        "paidAmount": 0,
-        "status": "pendiente"
+        "paidAmount": 25000,
+        "status": "pagado"
       },
       {
         "number": 4,
